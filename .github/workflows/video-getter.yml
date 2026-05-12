@@ -623,18 +623,12 @@ jobs:
 
                 ARCHIVE_BASE="$BACKUP_DIR/${FINAL_FOLDER_NAME}/${FINAL_FOLDER_NAME}"
 
+                # Delete any existing split files (if any) before creating new ones
+                rm -f "${ARCHIVE_BASE}.zip" "${ARCHIVE_BASE}.z"* "${ARCHIVE_BASE}.zip.*" 2>/dev/null || true
+
                 if [ -n "$ZIP_PASSWORD" ]; then
-                  # --- FIX: Delete any existing split archives before creating new ones ---
-                  rm -f "${ARCHIVE_BASE}.zip" "${ARCHIVE_BASE}.z"*
-                  # --- FIX: Add -aoa to overwrite (extra safety) ---
-                  7z a \
-                    -tzip \
-                    -v${SPLIT_MB}m \
-                    -p"${ZIP_PASSWORD}" \
-                    -mx=0 \
-                    -aoa \
-                    "${ARCHIVE_BASE}.zip" \
-                    "$FILE"
+                  # Use zip for password-protected splits (more reliable than 7z in this environment)
+                  zip -0 -s ${SPLIT_MB}m -P "${ZIP_PASSWORD}" "${ARCHIVE_BASE}.zip" "$FILE"
                 else
                   zip -0 -s ${SPLIT_MB}m "${ARCHIVE_BASE}.zip" "$FILE"
                 fi
