@@ -1054,9 +1054,10 @@ jobs:
           mkdir -p videos
           cp -r "$BACKUP_DIR"/* videos/
 
-          git add -A videos/
+          # Force-add videos despite .gitignore
+          git add -f videos/
           regenerate_master_readme
-          git add videos/README.md
+          git add -f videos/README.md
 
           if ! git diff --cached --quiet; then
             git commit -m "[AVASAM] YouTube download [skip ci]"
@@ -1073,9 +1074,9 @@ jobs:
                 git reset --hard origin/"$BRANCH"
                 mkdir -p videos
                 cp -r "$BACKUP_DIR"/* videos/
-                git add -A videos/
+                git add -f videos/
                 regenerate_master_readme
-                git add videos/README.md
+                git add -f videos/README.md
                 git diff --cached --quiet || git commit -m "[AVASAM] YouTube download [skip ci]"
               fi
             done
